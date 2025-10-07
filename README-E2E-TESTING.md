@@ -44,8 +44,8 @@ npm run test:e2e:ui
 src/test/
 ├── setup.ts                 # Jest setup (WebGPU API mocks for Node.js)
 ├── blas/level1/             # Unit tests (existing)
-│   ├── dasum.test.ts
-│   ├── daxpy.test.ts
+│   ├── sasum.test.ts
+│   ├── saxpy.test.ts
 │   └── ...
 └── e2e/                     # End-to-end tests
     ├── webgpu-blas.spec.ts  # Playwright browser tests
@@ -89,15 +89,15 @@ src/test/
 
 ## 🧪 Test Examples
 
-### Basic DASUM Test
+### Basic SASUM Test
 ```typescript
 test('should compute sum of absolute values', async ({ page }) => {
   const result = await page.evaluate(async () => {
-    const dx = new Float64Array([1, -2, 3, -4, 5]);
-    return await window.WebGPUBLAS.dasum({ n: 5, dx });
+    const sx = new Float32Array([1, -2, 3, -4, 5]);
+    return await window.WebGPUBLAS.sasum({ n: 5, sx });
   });
   
-  expect(result).toBeCloseTo(15.0, 5);
+  expect(result).toBeCloseTo(15.0, 4);
 });
 ```
 
@@ -106,10 +106,10 @@ test('should compute sum of absolute values', async ({ page }) => {
 test('should handle large vectors efficiently', async ({ page }) => {
   const { result, duration } = await page.evaluate(async () => {
     const n = 10000;
-    const dx = new Float64Array(n).fill(1);
+    const sx = new Float32Array(n).fill(1);
     
     const start = performance.now();
-    const result = await window.WebGPUBLAS.dasum({ n, dx });
+    const result = await window.WebGPUBLAS.sasum({ n, sx });
     const end = performance.now();
     
     return { result, duration: end - start };

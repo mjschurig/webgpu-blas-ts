@@ -48,12 +48,13 @@ export async function sasum(params: SASUMParams): Promise<number> {
   const workspaceBuffer = context.createOutputBuffer(workspaceSize);
   const resultBuffer = context.createOutputBuffer(4); // Single f32 result
   
-  // Stage 1: Create uniform buffer for stage 1 parameters
-  const stage1ParamsData = new ArrayBuffer(12); // 3 u32s
+  // Stage 1: Create uniform buffer for stage 1 parameters (16-byte aligned)
+  const stage1ParamsData = new ArrayBuffer(16); // 3 u32s + padding for 16-byte alignment
   const stage1ParamsView = new DataView(stage1ParamsData);
   stage1ParamsView.setUint32(0, n, true);
   stage1ParamsView.setInt32(4, incx, true);
   stage1ParamsView.setUint32(8, blocks, true);
+  // Padding byte at offset 12 for alignment
   
   const stage1ParamsBuffer = device.createBuffer({
     size: stage1ParamsData.byteLength,
@@ -63,8 +64,8 @@ export async function sasum(params: SASUMParams): Promise<number> {
   new Uint8Array(stage1ParamsBuffer.getMappedRange()).set(new Uint8Array(stage1ParamsData));
   stage1ParamsBuffer.unmap();
   
-  // Stage 2: Create uniform buffer for stage 2 parameters  
-  const stage2ParamsData = new ArrayBuffer(4); // 1 u32
+  // Stage 2: Create uniform buffer for stage 2 parameters (16-byte aligned)
+  const stage2ParamsData = new ArrayBuffer(16); // 1 u32 + padding for 16-byte alignment
   const stage2ParamsView = new DataView(stage2ParamsData);
   stage2ParamsView.setUint32(0, blocks, true);
   

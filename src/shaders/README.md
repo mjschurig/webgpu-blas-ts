@@ -6,18 +6,11 @@ This directory contains WGSL (WebGPU Shading Language) compute shaders for BLAS 
 
 ### ASUM - Sum of Absolute Values
 
-**Double Precision (DASUM)**
-- `dasum_stage1.wgsl` - First stage parallel reduction within workgroups
-- `dasum_stage2.wgsl` - Second stage final reduction across workgroups
-
 **Single Precision (SASUM)** 
 - `sasum_stage1.wgsl` - First stage parallel reduction within workgroups (f32)
 - `sasum_stage2.wgsl` - Second stage final reduction across workgroups (f32)
 
 ### AXPY - Compute y = alpha * x + y
-
-**Double Precision (DAXPY)**
-- `daxpy.wgsl` - Parallel vector operation using f64 precision
 
 **Single Precision (SAXPY)**
 - `saxpy.wgsl` - Parallel vector operation using f32 precision
@@ -33,9 +26,9 @@ The ASUM operations use a two-stage reduction pattern inspired by ROCm BLAS:
 2. **Stage 2**: Final reduction across workgroup results (only needed when multiple workgroups are used)
 
 ### Precision Handling
-- Double precision shaders use `f64` type and process `Float64Array` data
 - Single precision shaders use `f32` type and process `Float32Array` data  
-- Buffer sizes are automatically determined based on precision (4 bytes for f32, 8 bytes for f64)
+- Buffer sizes are automatically determined based on precision (4 bytes for f32)
+- Note: WebGPU has limited support for double precision, so this library focuses on single precision only
 
 ### Stride Support
 All operations support strided access patterns via `incx` and `incy` parameters, enabling efficient processing of non-contiguous data.

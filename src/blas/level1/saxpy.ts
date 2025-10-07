@@ -53,12 +53,13 @@ export async function saxpy(params: SAXPYParams): Promise<void> {
   const yData = new Float32Array(sy);
   const yBuffer = context.createBuffer(yData);
   
-  // Create uniform buffer for parameters
-  const paramsData = new ArrayBuffer(12); // 3 u32s/i32s
+  // Create uniform buffer for parameters (16-byte aligned)
+  const paramsData = new ArrayBuffer(16); // 3 u32s/i32s + padding for 16-byte alignment
   const paramsView = new DataView(paramsData);
   paramsView.setUint32(0, n, true);
   paramsView.setInt32(4, incx, true);
   paramsView.setInt32(8, incy, true);
+  // Padding byte at offset 12 for alignment
   
   const paramsBuffer = device.createBuffer({
     size: paramsData.byteLength,
@@ -68,8 +69,8 @@ export async function saxpy(params: SAXPYParams): Promise<void> {
   new Uint8Array(paramsBuffer.getMappedRange()).set(new Uint8Array(paramsData));
   paramsBuffer.unmap();
   
-  // Create uniform buffer for alpha (f32)
-  const alphaData = new ArrayBuffer(4); // f32
+  // Create uniform buffer for alpha (16-byte aligned)
+  const alphaData = new ArrayBuffer(16); // f32 + padding for 16-byte alignment
   const alphaView = new DataView(alphaData);
   alphaView.setFloat32(0, alpha, true);
   

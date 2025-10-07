@@ -5,11 +5,11 @@
  * instead of string literals for WebGPU shaders.
  */
 
-import { dasum, initialize, isWebGPUSupported } from '../src/index';
+import { sasum, initialize, isWebGPUSupported } from '../src/index';
 
-// The dasum function now uses WGSL files imported like this:
-// import dasumStage1Shader from '../shaders/dasum_stage1.wgsl';
-// import dasumStage2Shader from '../shaders/dasum_stage2.wgsl';
+// The sasum function now uses WGSL files imported like this:
+// import sasumStage1Shader from '../shaders/sasum_stage1.wgsl';
+// import sasumStage2Shader from '../shaders/sasum_stage2.wgsl';
 
 async function exampleWithWGSLImports(): Promise<void> {
   console.log('🚀 WebGPU BLAS with WGSL Imports Example\n');
@@ -31,19 +31,19 @@ async function exampleWithWGSLImports(): Promise<void> {
     return;
   }
 
-  // Example 1: Basic DASUM computation
-  console.log('\n📊 Example 1: Basic DASUM computation');
-  const vector1 = new Float64Array([1, -2, 3, -4, 5, -6, 7, -8, 9, -10]);
+  // Example 1: Basic SASUM computation
+  console.log('\n📊 Example 1: Basic SASUM computation');
+  const vector1 = new Float32Array([1, -2, 3, -4, 5, -6, 7, -8, 9, -10]);
   console.log('Input vector:', Array.from(vector1));
   
-  const result1 = await dasum({ n: 10, dx: vector1 });
+  const result1 = await sasum({ n: 10, sx: vector1 });
   console.log(`Sum of absolute values: ${result1}`);
   console.log(`Expected: ${1+2+3+4+5+6+7+8+9+10} ✅`);
 
   // Example 2: Large vector performance
   console.log('\n⚡ Example 2: Large vector performance');
   const largeSize = 100000;
-  const largeVector = new Float64Array(largeSize);
+  const largeVector = new Float32Array(largeSize);
   
   // Fill with random values
   for (let i = 0; i < largeSize; i++) {
@@ -52,7 +52,7 @@ async function exampleWithWGSLImports(): Promise<void> {
   
   console.log(`Processing ${largeSize} elements...`);
   const start = performance.now();
-  const result2 = await dasum({ n: largeSize, dx: largeVector });
+  const result2 = await sasum({ n: largeSize, sx: largeVector });
   const end = performance.now();
   
   console.log(`Result: ${result2.toFixed(4)}`);
@@ -61,10 +61,10 @@ async function exampleWithWGSLImports(): Promise<void> {
 
   // Example 3: Stride functionality
   console.log('\n🔢 Example 3: Stride functionality');
-  const stridedVector = new Float64Array([1, 999, 2, 888, 3, 777, 4, 666]);
+  const stridedVector = new Float32Array([1, 999, 2, 888, 3, 777, 4, 666]);
   console.log('Input vector:', Array.from(stridedVector));
   
-  const result3 = await dasum({ n: 4, dx: stridedVector, incx: 2 });
+  const result3 = await sasum({ n: 4, sx: stridedVector, incx: 2 });
   console.log(`Sum with stride 2: ${result3}`);
   console.log('Elements used: 1, 2, 3, 4 (skipping 999, 888, 777, 666)');
   console.log(`Expected: ${1+2+3+4} ✅`);

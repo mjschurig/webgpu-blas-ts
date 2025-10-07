@@ -12,19 +12,24 @@ export class WebGPUContext {
    * Initialize WebGPU context
    */
   async initialize(): Promise<void> {
+    console.log('Initializing WebGPU context...');
+    
     if (!navigator.gpu) {
       throw new Error('WebGPU is not supported in this browser');
     }
+    console.log('✅ navigator.gpu is available');
 
     this.adapter = await navigator.gpu.requestAdapter();
     if (!this.adapter) {
       throw new Error('Failed to get WebGPU adapter');
     }
+    console.log('✅ WebGPU adapter obtained:', this.adapter.info || 'Info not available');
 
     this.device = await this.adapter.requestDevice();
     if (!this.device) {
       throw new Error('Failed to get WebGPU device');
     }
+    console.log('✅ WebGPU device obtained');
 
     // Handle device lost (if supported)
     if (this.device.lost) {
@@ -39,7 +44,7 @@ export class WebGPUContext {
    */
   getDevice(): GPUDevice {
     if (!this.device) {
-      throw new Error('WebGPU context not initialized');
+      throw new Error('WebGPU context not initialized. Call initialize() first.');
     }
     return this.device;
   }
@@ -139,11 +144,25 @@ let globalContext: WebGPUContext | null = null;
  */
 export async function getWebGPUContext(): Promise<WebGPUContext> {
   if (!globalContext) {
+    console.log('Creating new WebGPU context...');
     globalContext = new WebGPUContext();
     await globalContext.initialize();
+  } else {
+    // Check if device is still valid
+    try {
+      globalContext.getDevice();
+    } catch {
+      console.log('WebGPU context invalid, recreating...');
+      globalContext = new WebGPUContext();
+      await globalContext.initialize();
+    }
   }
   return globalContext;
 }
+
+
+
+
 
 
 

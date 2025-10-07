@@ -6,7 +6,7 @@
     "ghcr.io/devcontainers/features/github-cli:1": {}
   },
   "runArgs": [
-    "--gpus=all",
+   "--gpus=all",
     //"--device=/dev/dri",
     //"--privileged"
   ],
@@ -46,6 +46,10 @@
   ],
   "postCreateCommand": "sudo apt-get update && sudo npx playwright install-deps && npm install"
 }
+
+
+
+
 
 
 

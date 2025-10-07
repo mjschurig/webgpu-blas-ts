@@ -26,7 +26,7 @@ npm install webgpu-blas-ts
 ## 🏁 Quick Start
 
 ```typescript
-import { initialize, dasum, daxpy, isWebGPUSupported } from 'webgpu-blas-ts';
+import { initialize, sasum, saxpy, isWebGPUSupported } from 'webgpu-blas-ts';
 
 // Check WebGPU support
 if (!isWebGPUSupported()) {
@@ -37,17 +37,17 @@ if (!isWebGPUSupported()) {
 // Initialize the library
 await initialize();
 
-// DASUM: Sum of absolute values
-const x = new Float64Array([1, -2, 3, -4, 5]);
-const result = await dasum({ n: 5, dx: x });
+// SASUM: Sum of absolute values
+const x = new Float32Array([1, -2, 3, -4, 5]);
+const result = await sasum({ n: 5, sx: x });
 console.log(result); // 15.0
 
-// DAXPY: y = alpha * x + y
+// SAXPY: y = alpha * x + y
 const alpha = 2.0;
-const dx = new Float64Array([1, 2, 3, 4]);
-const dy = new Float64Array([5, 6, 7, 8]);
-await daxpy({ n: 4, alpha, dx, dy });
-console.log(Array.from(dy)); // [7, 10, 13, 16]
+const sx = new Float32Array([1, 2, 3, 4]);
+const sy = new Float32Array([5, 6, 7, 8]);
+await saxpy({ n: 4, alpha, sx, sy });
+console.log(Array.from(sy)); // [7, 10, 13, 16]
 ```
 
 ## 📖 API Reference
@@ -64,16 +64,10 @@ async function initialize(): Promise<void>
 
 ### BLAS Level 1 Operations
 
-#### DASUM / SASUM - Sum of Absolute Values
-```typescript
-// Double precision
-async function dasum(params: {
-  n: number;           // Number of elements
-  dx: Float64Array;    // Input vector
-  incx?: number;       // Stride (default: 1)
-}): Promise<number>
+*Note: This library focuses on single precision due to WebGPU limitations with double precision.*
 
-// Single precision  
+#### SASUM - Sum of Absolute Values
+```typescript
 async function sasum(params: {
   n: number;           // Number of elements
   sx: Float32Array;    // Input vector
@@ -81,18 +75,8 @@ async function sasum(params: {
 }): Promise<number>
 ```
 
-#### DAXPY / SAXPY - Alpha X Plus Y
+#### SAXPY - Alpha X Plus Y
 ```typescript
-// Double precision: y = alpha * x + y
-async function daxpy(params: {
-  n: number;           // Number of elements
-  alpha: number;       // Scalar multiplier
-  dx: Float64Array;    // Input vector x
-  dy: Float64Array;    // Input/output vector y
-  incx?: number;       // Stride for x (default: 1)
-  incy?: number;       // Stride for y (default: 1)
-}): Promise<void>
-
 // Single precision: y = alpha * x + y
 async function saxpy(params: {
   n: number;           // Number of elements
@@ -137,12 +121,12 @@ WebGPU BLAS operations are designed for **large datasets** where GPU paralleliza
 ```typescript
 // Example: Large vector operations
 const n = 1000000;
-const x = new Float64Array(n).map(() => Math.random());
-const y = new Float64Array(n).map(() => Math.random());
+const x = new Float32Array(n).map(() => Math.random());
+const y = new Float32Array(n).map(() => Math.random());
 
-console.time('GPU DAXPY');
-await daxpy({ n, alpha: 2.0, dx: x, dy: y });
-console.timeEnd('GPU DAXPY'); // ~10-50ms on modern GPU vs seconds on CPU
+console.time('GPU SAXPY');
+await saxpy({ n, alpha: 2.0, sx: x, sy: y });
+console.timeEnd('GPU SAXPY'); // ~10-50ms on modern GPU vs seconds on CPU
 ```
 
 ### When to Use WebGPU BLAS
@@ -176,14 +160,11 @@ npm run format
 ```
 src/
 ├── blas/level1/          # BLAS Level 1 implementations
-│   ├── dasum.ts          # Double precision absolute sum
 │   ├── sasum.ts          # Single precision absolute sum  
-│   ├── daxpy.ts          # Double precision AXPY
 │   └── saxpy.ts          # Single precision AXPY
 ├── shaders/              # WebGPU compute shaders
-│   ├── dasum_stage1.wgsl # DASUM reduction stage 1
-│   ├── dasum_stage2.wgsl # DASUM reduction stage 2
-│   ├── daxpy.wgsl        # DAXPY implementation
+│   ├── sasum_stage1.wgsl # SASUM reduction stage 1
+│   ├── sasum_stage2.wgsl # SASUM reduction stage 2
 │   └── saxpy.wgsl        # SAXPY implementation
 ├── webgpu/               # WebGPU context and utilities
 │   └── context.ts        # WebGPU device management

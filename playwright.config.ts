@@ -12,7 +12,7 @@ export default defineConfig({
   reporter: 'html',
   
   use: {
-    baseURL: 'http://localhost:3001',
+    baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
   },
 
@@ -28,22 +28,10 @@ export default defineConfig({
             '--enable-features=Vulkan,UseSkiaRenderer,WebGPU',
             '--disable-vulkan-fallback-to-gl-for-testing',
             '--use-vulkan=native',
-            '--use-angle=vulkan'
+            '--use-angle=vulkan',
+            '--no-sandbox',
+            '--disable-dev-shm-usage'
           ]
-        }
-      },
-    },
-    
-    {
-      name: 'firefox-webgpu',
-      use: { 
-        ...devices['Desktop Firefox'],
-        // Enable WebGPU in Firefox
-        launchOptions: {
-          firefoxUserPrefs: {
-            'dom.webgpu.enabled': true,
-            'gfx.webgpu.force-enabled': true
-          }
         }
       },
     },
@@ -51,7 +39,7 @@ export default defineConfig({
 
   webServer: {
     command: 'npm run test:serve',
-    url: 'http://localhost:3001',
+    url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },

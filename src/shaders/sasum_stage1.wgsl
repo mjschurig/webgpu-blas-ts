@@ -25,18 +25,20 @@ fn main(@builtin(global_invocation_id) global_id: vec3<u32>,
   let incx = params.incx;
   let nblocks = params.nblocks;
   
-  // ROCm algorithm: each thread processes WIN elements
+  // Each thread processes WIN elements starting from its global position
   var sum = 0.0f;
-  var element_id = workgroup_id.x * WORKGROUP_SIZE + tid;
-  let inc = WORKGROUP_SIZE * nblocks; // gridDim.x equivalent
+  let global_tid = global_id.x;
+  let total_threads = WORKGROUP_SIZE * nblocks;
   
   // Process WIN elements per thread with proper stride
-  for (var j = 0u; j < WIN && element_id < n; j++) {
-    let idx = element_id * u32(incx);
-    if (idx < arrayLength(&input)) {
-      sum += abs(input[idx]);
+  for (var j = 0u; j < WIN; j++) {
+    let element_id = global_tid + j * total_threads;
+    if (element_id < n) {
+      let idx = element_id * u32(incx);
+      if (idx < arrayLength(&input)) {
+        sum += abs(input[idx]);
+      }
     }
-    element_id += inc;
   }
   
   // Store partial sum in shared memory
