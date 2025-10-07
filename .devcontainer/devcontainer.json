@@ -1,0 +1,60 @@
+{
+  "name": "WebGPU BLAS TypeScript",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "runArgs": [
+    "--gpus=all",
+    //"--device=/dev/dri",
+    //"--privileged"
+  ],
+  /*"containerEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}",
+    "LIBGL_ALWAYS_SOFTWARE": "0"
+  },
+  */
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode",
+        "ms-vscode.eslint",
+        "bradlc.vscode-tailwindcss",
+        "ms-vscode.test-adapter-converter",
+        "hbenl.vscode-test-explorer",
+        "orta.vscode-jest",
+        "ms-vscode.webgl-glsl-editor",
+        "wgsl-analyzer.wgsl-analyzer"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": true
+        },
+        "typescript.preferences.useAliasesForRenames": false,
+        "typescript.updateImportsOnFileMove.enabled": "always"
+      }
+    }
+  },
+  "remoteUser": "node",
+  "mounts": [
+    "source=${localWorkspaceFolder}/.git,target=/workspaces/webgpu-blas-ts/.git,type=bind,consistency=cached",
+    //"source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"
+  ],
+  "postCreateCommand": "sudo apt-get update && sudo npx playwright install-deps && npm install"
+}
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,99 @@
+{
+  "name": "webgpu-blas-ts",
+  "version": "0.1.0",
+  "description": "WebGPU-accelerated BLAS implementation in TypeScript",
+  "keywords": [
+    "webgpu",
+    "blas",
+    "linear-algebra",
+    "gpu",
+    "compute-shaders",
+    "typescript"
+  ],
+  "author": "Max",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "build": "node esbuild.config.js && tsc --emitDeclarationOnly",
+    "build:esbuild": "node esbuild.config.js",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:watch": "tsc --watch",
+    "dev": "tsc --watch",
+    "test": "npm run test:e2e",
+    "test:serve": "node --loader ts-node/esm src/test/e2e/test-server.ts",
+    "test:e2e": "npm run build && playwright test",
+    "test:e2e:headed": "npm run build && playwright test --headed",
+    "test:e2e:ui": "npm run build && playwright test --ui",
+    "test:install-browsers": "playwright install",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "format:check": "prettier --check src/**/*.ts",
+    "precommit": "npm run lint && npm run format:check",
+    "prepublishOnly": "npm run build && npm run test:e2e",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^20.11.19",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
+    "esbuild": "^0.25.10",
+    "esbuild-plugin-glsl": "^1.4.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
+    "playwright": "^1.56.0",
+    "prettier": "^3.2.5",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@webgpu/types": "^0.1.40"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/username/webgpu-blas-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/username/webgpu-blas-ts/issues"
+  },
+  "homepage": "https://github.com/username/webgpu-blas-ts#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
